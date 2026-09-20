@@ -4,6 +4,29 @@
 
 ---
 
+## النشر الأول على السيرفر
+
+هذه خطوات تُنفَّذ مرة واحدة فقط، على السيرفر (Ubuntu 24.04، مستخدم `qutuz` غير root):
+
+```bash
+# تأكد من الأدوات (mongodump و rclone مفروض مثبّتين ومُعدّين مسبقاً)
+node -v            # 20+
+pnpm -v            # لو غير موجود: corepack enable && corepack prepare pnpm@12.5.1 --activate
+pm2 -v             # لو غير موجود: sudo npm install -g pm2
+
+# جهّز مجلد النسخ (BACKUP_DIR الافتراضي /var/backups/mongo مسار نظام يحتاج صلاحية)
+sudo mkdir -p /var/backups/mongo
+sudo chown qutuz:qutuz /var/backups/mongo
+
+# اجلب الكود
+git clone https://github.com/SeifEldinKen/mongo-backup.git
+cd mongo-backup
+```
+
+بعدها كمّل بخطوات "التثبيت" أدناه. لتحديث الكود لاحقاً بعد أي push من جهازك: `git pull origin main && pnpm install && pnpm build && pnpm pm2:trigger`.
+
+---
+
 ## التثبيت
 
 ```bash

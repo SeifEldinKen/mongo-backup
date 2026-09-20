@@ -7,15 +7,15 @@ loadDotenv();
 const requiredString = (name: string) =>
   z.preprocess(
     (v) => (v === undefined || v === '' ? undefined : v),
-    z.string({ error: () => `${name} مطلوب ولم يتم تعيينه` }),
+    z.string({ error: () => `${name} is required and was not set` }),
   );
 
 const requiredEmail = (name: string) =>
   z.preprocess(
     (v) => (v === undefined || v === '' ? undefined : v),
     z
-      .string({ error: () => `${name} مطلوب ولم يتم تعيينه` })
-      .email(`${name} يجب أن يكون بريداً إلكترونياً صالحاً`),
+      .string({ error: () => `${name} is required and was not set` })
+      .email(`${name} must be a valid email address`),
   );
 
 const boolFromEnv = (defaultValue: boolean) =>
@@ -35,7 +35,7 @@ const envSchema = z.object({
     z
       .string()
       .refine((v) => v.startsWith('mongodb://') || v.startsWith('mongodb+srv://'), {
-        message: 'MONGO_URI يجب أن يبدأ بـ mongodb:// أو mongodb+srv://',
+        message: 'MONGO_URI must start with mongodb:// or mongodb+srv://',
       }),
   ),
   RCLONE_CONFIG: requiredString('RCLONE_CONFIG'),
@@ -67,7 +67,7 @@ export function loadConfig(): Config {
   if (!parsed.success) {
     const first = parsed.error.issues[0];
     const varName = first?.path[0] ?? 'unknown';
-    throw new BackupError('preflight', `[${String(varName)}] ${first?.message ?? 'قيمة إعداد غير صالحة'}`, 2);
+    throw new BackupError('preflight', `[${String(varName)}] ${first?.message ?? 'Invalid configuration value'}`, 2);
   }
   return parsed.data;
 }

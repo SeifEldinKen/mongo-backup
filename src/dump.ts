@@ -20,7 +20,7 @@ export async function runDump(config: Config): Promise<BackupResult> {
   const fileName = `mongo-${formatTimestamp(new Date())}.gz`;
   const filePath = join(config.BACKUP_DIR, fileName);
 
-  logger.info('dump', 'بدء mongodump للقاعدة 49');
+  logger.info('dump', 'Starting mongodump for database 49');
   const startedAt = Date.now();
 
   try {
@@ -30,7 +30,7 @@ export async function runDump(config: Config): Promise<BackupResult> {
       { timeoutMs: config.DUMP_TIMEOUT_MS },
     );
   } catch (error) {
-    throw new BackupError('dump', `فشل mongodump: ${describeExecError(error)}`);
+    throw new BackupError('dump', `mongodump failed: ${describeExecError(error)}`);
   }
 
   const durationMs = Date.now() - startedAt;
@@ -39,18 +39,18 @@ export async function runDump(config: Config): Promise<BackupResult> {
   try {
     fileSizeBytes = (await stat(filePath)).size;
   } catch {
-    throw new BackupError('dump', `لم يتم إنشاء ملف النسخة الاحتياطية: ${filePath}`);
+    throw new BackupError('dump', `Backup file was not created: ${filePath}`);
   }
 
   const fileSizeMb = fileSizeBytes / (1024 * 1024);
   if (fileSizeMb < config.MIN_BACKUP_SIZE_MB) {
     throw new BackupError(
       'dump',
-      `حجم النسخة (${fileSizeMb.toFixed(2)} MB) أقل من الحد الأدنى المسموح (${config.MIN_BACKUP_SIZE_MB} MB)`,
+      `Backup size (${fileSizeMb.toFixed(2)} MB) is below the allowed minimum (${config.MIN_BACKUP_SIZE_MB} MB)`,
     );
   }
 
-  logger.info('dump', `اكتمل — ${fileSizeMb.toFixed(1)} MB في ${(durationMs / 1000).toFixed(1)}s`);
+  logger.info('dump', `Completed — ${fileSizeMb.toFixed(1)} MB in ${(durationMs / 1000).toFixed(1)}s`);
 
   return { filePath, fileName, fileSizeBytes, durationMs };
 }

@@ -48,8 +48,8 @@ export async function runCommand(
           reject(
             new ExecError(
               timedOut
-                ? `${command} تجاوز المهلة الزمنية (${options.timeoutMs}ms)`
-                : `${command} فشل: ${error.message}`,
+                ? `${command} timed out (${options.timeoutMs}ms)`
+                : `${command} failed: ${error.message}`,
               stdout,
               stderr,
               timedOut,

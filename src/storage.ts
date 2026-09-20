@@ -13,7 +13,7 @@ function remoteDir(config: Config): string {
 
 export async function uploadFile(config: Config, filePath: string): Promise<string> {
   const dir = remoteDir(config);
-  logger.info('upload', `رفع إلى ${dir}`);
+  logger.info('upload', `Uploading to ${dir}`);
 
   try {
     await withRetry(
@@ -25,7 +25,7 @@ export async function uploadFile(config: Config, filePath: string): Promise<stri
       [5000, 15000, 45000],
     );
   } catch (error) {
-    throw new BackupError('upload', `فشل رفع الملف عبر rclone: ${describeExecError(error)}`);
+    throw new BackupError('upload', `Failed to upload file via rclone: ${describeExecError(error)}`);
   }
 
   return dir;
@@ -40,7 +40,7 @@ export async function verifyRemoteFile(config: Config, fileName: string): Promis
       env: rcloneEnv(config),
     }));
   } catch (error) {
-    throw new BackupError('upload', `فشل التحقق من وجود الملف على الـ remote: ${describeExecError(error)}`);
+    throw new BackupError('upload', `Failed to verify the file on the remote: ${describeExecError(error)}`);
   }
 
   const found = stdout
@@ -49,10 +49,10 @@ export async function verifyRemoteFile(config: Config, fileName: string): Promis
     .includes(fileName);
 
   if (!found) {
-    throw new BackupError('upload', `الملف ${fileName} غير موجود على الـ remote بعد الرفع`);
+    throw new BackupError('upload', `File ${fileName} was not found on the remote after upload`);
   }
 
-  logger.info('upload', 'تم التحقق من الملف على الـ remote ✓');
+  logger.info('upload', 'Verified file on the remote ✓');
 }
 
 export async function generateDownloadLink(config: Config, fileName: string): Promise<string> {
@@ -68,12 +68,12 @@ export async function generateDownloadLink(config: Config, fileName: string): Pr
     );
     const link = stdout.trim();
     if (!link) {
-      throw new BackupError('link', 'rclone link أعاد رابطاً فارغاً');
+      throw new BackupError('link', 'rclone link returned an empty link');
     }
     return link;
   } catch (error) {
     if (error instanceof BackupError) throw error;
-    throw new BackupError('link', `فشل توليد رابط التحميل: ${describeExecError(error)}`);
+    throw new BackupError('link', `Failed to generate download link: ${describeExecError(error)}`);
   }
 }
 
@@ -94,9 +94,9 @@ export async function deleteOldRemoteBackups(config: Config): Promise<number> {
       env: rcloneEnv(config),
     });
   } catch (error) {
-    throw new BackupError('retention', `فشل حذف النسخ القديمة من الـ remote: ${describeExecError(error)}`);
+    throw new BackupError('retention', `Failed to delete old backups from the remote: ${describeExecError(error)}`);
   }
 
-  logger.info('retention', `حُذفت ${deletedCount} نسخة قديمة من الـ remote`);
+  logger.info('retention', `Deleted ${deletedCount} old backup(s) from the remote`);
   return deletedCount;
 }

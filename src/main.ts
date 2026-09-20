@@ -49,7 +49,7 @@ async function runBackup(config: Config): Promise<{ lock: LockHandle | undefined
 
     const expiryMs = parseExpiry(config.LINK_EXPIRE);
     const expiryLabel = expiryMs ? new Date(Date.now() + expiryMs).toISOString() : config.LINK_EXPIRE;
-    logger.info('link', `رابط صالح حتى ${expiryLabel}`);
+    logger.info('link', `Link valid until ${expiryLabel}`);
 
     await deleteOldRemoteBackups(config);
     await cleanupLocalBackups(config);
@@ -62,7 +62,7 @@ async function runBackup(config: Config): Promise<{ lock: LockHandle | undefined
     });
 
     const totalDurationMs = Date.now() - startedAt;
-    logger.info('done', `اكتملت العملية في ${(totalDurationMs / 1000).toFixed(1)}s`);
+    logger.info('done', `Completed in ${(totalDurationMs / 1000).toFixed(1)}s`);
 
     return { lock, exitCode: 0 };
   } catch (error) {
@@ -98,6 +98,6 @@ main()
     process.exitCode = exitCode;
   })
   .catch((error: unknown) => {
-    logger.error('done', `خطأ غير متوقع: ${errorMessage(error)}`);
+    logger.error('done', `Unexpected error: ${errorMessage(error)}`);
     process.exitCode = 1;
   });

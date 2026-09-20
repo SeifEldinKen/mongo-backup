@@ -24,9 +24,9 @@ export async function cleanupLocalBackups(config: Config): Promise<number> {
       }
     }
 
-    logger.info('retention', `حُذفت ${deleted} نسخة محلية`);
+    logger.info('retention', `Deleted ${deleted} local backup(s)`);
     return deleted;
   } catch (error) {
-    throw new BackupError('retention', `فشل حذف النسخ المحلية القديمة: ${(error as Error).message}`);
+    throw new BackupError('retention', `Failed to delete old local backups: ${(error as Error).message}`);
   }
 }

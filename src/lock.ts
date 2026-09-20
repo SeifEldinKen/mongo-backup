@@ -47,11 +47,11 @@ export async function acquireLock(backupDir: string): Promise<LockHandle> {
   const existing = await readLockFile(lockPath);
   if (existing && isProcessAlive(existing.pid)) {
     throw new LockHeldError(
-      `يوجد تشغيلة نشطة بالفعل (PID ${existing.pid}, بدأت في ${existing.startedAt}) — سيتم التخطي`,
+      `A run is already in progress (PID ${existing.pid}, started at ${existing.startedAt}) — skipping`,
     );
   }
   if (existing) {
-    logger.warn('lock', `تجاهل قفل يتيم (PID ${existing.pid} غير حي)`);
+    logger.warn('lock', `Ignoring stale lock (PID ${existing.pid} is not alive)`);
   }
 
   const contents: LockFileContents = { pid: process.pid, startedAt: new Date().toISOString() };
@@ -69,7 +69,7 @@ export async function acquireLock(backupDir: string): Promise<LockHandle> {
 
 export function registerShutdownHandlers(release: () => Promise<void>): void {
   const handleSignal = (signal: NodeJS.Signals) => {
-    logger.warn('lock', `تم استقبال ${signal} — تحرير القفل والخروج`);
+    logger.warn('lock', `Received ${signal} — releasing lock and exiting`);
     void release().finally(() => process.exit(1));
   };
   process.once('SIGINT', handleSignal);

@@ -12,7 +12,7 @@ async function checkToolVersion(command: string, args: string[]): Promise<string
   } catch (error) {
     throw new BackupError(
       'preflight',
-      `الأداة "${command}" غير متاحة في PATH أو فشل استدعاؤها (${(error as Error).message})`,
+      `Tool "${command}" is not available in PATH or failed to run (${(error as Error).message})`,
       3,
     );
   }
@@ -25,11 +25,11 @@ async function checkDiskSpace(backupDir: string, minFreeMb: number): Promise<voi
   if (freeMb < minFreeMb) {
     throw new BackupError(
       'preflight',
-      `المساحة المتاحة (${freeMb.toFixed(1)} MB) أقل من الحد الأدنى المطلوب (${minFreeMb} MB) في ${backupDir}`,
+      `Available disk space (${freeMb.toFixed(1)} MB) is below the required minimum (${minFreeMb} MB) at ${backupDir}`,
       4,
     );
   }
-  logger.info('preflight', `المساحة المتاحة: ${(freeMb / 1024).toFixed(1)} GB ✓`);
+  logger.info('preflight', `Available disk space: ${(freeMb / 1024).toFixed(1)} GB ✓`);
 }
 
 export async function runPreflightChecks(config: Config): Promise<void> {
