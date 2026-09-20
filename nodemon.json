@@ -1,6 +1,6 @@
 {
   "watch": ["src/**/*", ".env", "package.json", "tsconfig.json"],
-  "exec": "tsx src/main.ts",
+  "exec": "pnpm build && node --enable-source-maps dist/main.js",
   "ext": "ts, js, json",
   "events": {}
 }
